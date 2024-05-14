@@ -1,0 +1,57 @@
+{% extends 'base.html.jinja' %}
+
+
+
+{% block content %}
+
+    <header>
+        <img src="static/img/Icono.png" alt="Logo">
+    </header>
+
+    
+    <div class="banner">
+        <img class="Banner_img" src="static/img/Banner_1.png" alt="Banner_1"> 
+    </div>
+    
+    
+
+
+    <h1 class="titulo"> {% block title %} Agregue una categoría {% endblock %}</h1>
+
+   
+
+        <form class method="POST" Content-Type='application/json'>
+
+            <article>
+
+            <div>
+                <label for="IDCategoria">ID  de la Categoria: </label><br>
+                <input type="text" class="form-control" name="IDCategoria" 
+                placeholder="IDCategoria"
+                value="{{ request.form['IDCategoria'] }}">
+                <br>
+            </div> 
+            <div>
+                <label for="Nombre">Nombre: </label><br>
+                <input type="text" class="form-control" name="Nombre" 
+                placeholder="Nombre"
+                value="{{ request.form['Nombre'] }}">
+                <br>
+            </div>
+            <div>
+                <label for="Descripcion">Descripción: </label><br>
+                <input type="text" class="form-control" name="Descripcion" 
+                placeholder="Descripcion"
+                value="{{ request.form['Descripcion'] }}">
+                <br>
+            </div>
+           
+            <input div="formcenter" type="submit" value="Submit">
+        </form>
+        </article>
+
+
+
+
+{% endblock %}
+</html>

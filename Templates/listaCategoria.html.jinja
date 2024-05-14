@@ -1,0 +1,33 @@
+{% extends 'base.html.jinja' %}
+
+
+
+{% block content %}
+<h1>{% block title %} Mi lista {% endblock %}</h1>
+    
+
+    <table id="formcenter">
+
+        <tr>
+            <th>ID Categoria</th>
+            <th>Nombre</th>
+            <th>Descripcion </th>
+        </tr>
+        {% for categoria in categoriaList %}
+        <tr>
+            <td>{{ categoria.IDCategoria }}</td>
+            <td>{{ categoria.Nombre }} </td>
+            <td>{{ categoria.Descripcion }} </td>
+            <td class="css" ><button class="css" name="Modificar" onclick="window.location.href='/update/{{categoria._id}}' ;" ></button> 
+                <button class="css" name="Eliminar" onclick="window.location.href='/delete/{{categoria._id}}' ;" ></button> 
+            </td>
+
+        </tr>
+
+           
+           
+        {% endfor %}
+    </table>
+{% endblock %}
+
+

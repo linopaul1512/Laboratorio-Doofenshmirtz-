@@ -1,22 +1,23 @@
 from flask import Flask, request, render_template, redirect, url_for, flash
 from db import Categorias, Indicaciones, Examenes
 from bson.objectid import ObjectId
+import random
 
 app = Flask(__name__, template_folder="./Templates")
-app.config['SECRET_KEY'] = "clave secreta"
+app.config['SECRET_KEY'] = "clave secretas"
 
 categoriaList = []
 
 @app.route("/list", methods=["GET"])
 def getListCategorias():
     categoriaList = Categorias.find()
-
-    return render_template('lista.html.jinja', categoriaList=categoriaList)
+    return render_template('listaCategoria.html.jinja', categoriaList=categoriaList)
 
 @app.route('/', methods=['GET', 'POST'])
 def agregar_categoria():
+
     if request.method == "POST":
-        IDCategoria = request.form['IDCategoria']
+        IDCategoria = [random.randint(0, 1000) for _ in range(10)]
         Nombre = request.form['Nombre']
         Descripcion = request.form['Descripcion']
 
@@ -27,8 +28,8 @@ def agregar_categoria():
             'Descripcion' : Descripcion
         }
         Categorias.insert_one(object)
-        return redirect(url_for('getList'))
-    return render_template("add.html.jinja")
+        return redirect(url_for('getListCategorias'))
+    return render_template("agregarcategoria.html.jinja")
 
 
 
@@ -100,12 +101,15 @@ def modificar_indicacion(id):
         return redirect(url_for('getList'))
     return render_template("update.html.jinja", indicaciones=indicaciones)
 
-@app.route('/delete/<id>', methods=['GET'])
 
+
+"""
+@app.route('/delete/<id>', methods=['GET'])
 def eliminar_categoria(id):
     oid = ObjectId(id)
     indicaciones = Categorias.delete_one({'_id': oid})
     return redirect(url_for('getList'))
+"""
 
 
 
