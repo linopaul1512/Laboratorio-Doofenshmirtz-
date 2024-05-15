@@ -8,6 +8,9 @@ app.config['SECRET_KEY'] = "clave secretas"
 
 categoriaList = []
 indicacionList = []
+examenList = []
+
+
 @app.route("/categoria/list", methods=["GET"])
 def getListCategorias():
     categoriaList = Categorias.find()
@@ -120,17 +123,13 @@ def eliminar_indicacion(id):
 
 
 #CRUD de examenes
-"""
 
-
-
-
-@app.route("/list", methods=["GET"])
+@app.route("/examenes/list", methods=["GET"])
 def getListExamenes():
     examenesList = Examenes.find()
     return render_template('lista.html.jinja', examenesList=examenesList)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('examenes/agregar', methods=['GET', 'POST'])
 def agregar_examen():
     if request.method == "POST"and Categorias:
         IDExamen= request.form['IDExamen']
@@ -138,7 +137,7 @@ def agregar_examen():
         TipoMuestra = request.form['TipoMuestra']
         Precio = request.form['Precio']
         IDIndicacion = request.form['IDIndicacion']
-
+        Categorias.find()
 
         object = {
             'IDExamen': IDExamen,
@@ -148,18 +147,18 @@ def agregar_examen():
             'IDIndicacion' : IDIndicacion
         }
         Examenes.insert_one(object)
-        return redirect(url_for('getList'))
-    return render_template("add.html.jinja")
+        return redirect(url_for('getListExamenes'))
+    return render_template("agregarexamen.html.jinja")
 
 
 
-@app.route('/<id>', methods=['GET'])
+@app.route('/examenes/<id>', methods=['GET'])
 def buscar_examen(id):
     oid = ObjectId(id)
     examenes = examenes.find_one({'_id': oid})
     return render_template('detail.html.jinja', examenes = examenes)
 
-@app.route('/update/<id>', methods=['GET', 'POST'])
+@app.route('/examenes/update/<id>', methods=['GET', 'POST'])
 def modificar_examen(id):
     oid = ObjectId(id)
     examenes = Examenes.find_one({'_id': oid})
@@ -173,17 +172,14 @@ def modificar_examen(id):
                                           'IDIndicacion': new_element['IDIndicacion']
                                           
                                           })    
-        return redirect(url_for('getList'))
-    return render_template("update.html.jinja", examenes=examenes)
+        return redirect(url_for('getListExamenes'))
+    return render_template("modificarExamen.html.jinja", examenes=examenes)
 
-@app.route('/delete/<id>', methods=['POST'])
-
+@app.route('/examenes/delete/<id>', methods=['POST'])
 def eliminar_examen(id):
     oid = ObjectId(id)
     examenes = Examenes.delete_one({'_id': oid})
-    return redirect(url_for('getList'))
-
-"""
+    return redirect(url_for('getListExamenes'))
 
 
 

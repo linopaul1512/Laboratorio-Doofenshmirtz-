@@ -1,0 +1,61 @@
+{% extends 'headerCRUD.html.jinja' %}
+
+
+{% block content %}
+
+
+    
+
+
+    <h1 class="titulo"> {% block title %} Agregue una categoría {% endblock %}</h1>
+
+   
+
+        <form class method="POST" Content-Type='application/json'>
+
+            <article>
+
+            <div>
+                <input type="hidden" step="de" class="form-control" name="IDExamen"  
+                placeholder="IDExamen"
+                value="{{ request.form['IDExamen'] }}">
+                <br>
+            </div> 
+            <div>
+                <label for="IDca">Nombre: </label><br>
+                <select class="form-control" name="Nombre" 
+                placeholder="Nombre"
+                value="{{ request.form['Nombre'] }}">
+                <br>
+            </div><div class="column"><p><h2>Hall of fame</h2></p>{% for table in tables %}{{ table|safe }}{% endfor %}</div>
+
+            <div>
+                <label for="TipoMuestra">Tipo de Muestra: </label><br>
+                <input type="text" class="form-control" name="TipoMuestra" 
+                placeholder="TipoMuestra"
+                value="{{ request.form['TipoMuestra'] }}">
+                <br>
+            </div>
+            <div>
+                <label for="Precio">Precio: </label><br>
+                <input type="number" class="form-control" name="Precio" 
+                placeholder="Precio"
+                value="{{ request.form['Precio'] }}">
+                <br>
+            </div>
+            <div>
+                <label for="Descripcion">Descripción: </label><br>
+                <input type="text" class="form-control" name="Descripcion" 
+                placeholder="Descripcion"
+                value="{{ request.form['Descripcion'] }}">
+                <br>
+            </div>
+           
+            <input div="formcenter" type="submit" value="Submit">
+        </form>
+        </article>
+
+
+
+
+{% endblock %}

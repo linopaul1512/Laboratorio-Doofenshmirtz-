@@ -1,0 +1,57 @@
+{% extends 'headerCRUD.html.jinja' %}
+
+{% block content %}
+
+
+    <h1 class="titulo"> {% block title %} Modifique una categoría {% endblock %}</h1>
+
+   
+
+        <form class method="POST" Content-Type='application/json'>
+
+            <article>
+
+           <div>
+                <input   type="hidden"  class="form-control" name="IDExamen" 
+                placeholder="IDExamen"
+                value="{{ examenes.IDExamen }}">
+                <br>
+            </div> 
+
+            <div>
+                <label for="IDCategoria">IDCategoria: </label><br>
+                <input type="text" class="form-control" name="Nombre" 
+                placeholder="IDCategoria"
+                value="{{ examenes.IDCategoria }}">
+                <br>
+            </div>
+
+                <div>
+                <label for="ID Indicacion">ID Indicacion: </label><br>
+                <input type="text" class="form-control" name="IDIndicacion" 
+                placeholder="IDIndicacion"
+                value="{{ examenes.IDIndicacion }}">
+                <br>
+            </div>
+
+            <div>
+                <label for="TipoMuestra">Tipo de Muestra: </label><br>
+                <input type="text" class="form-control" name="TipoMuestra" 
+                placeholder="TipoMuestra"
+                value="{{ examenes.TipoMuestra }}">
+                <br>
+            </div>
+            
+            <div>
+                <label for="Precio">Precio: </label><br>
+                <input type="number" class="form-control" name="Precio" 
+                placeholder="Precio"
+                value="{{ examenes.Precio }}">
+                <br>
+            </div>
+           
+            <input div="formcenter" type="submit" value="Submit">
+        </form>
+        </article>
+
+

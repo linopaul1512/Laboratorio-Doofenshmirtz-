@@ -1,0 +1,42 @@
+{% extends 'base.html.jinja' %}
+
+
+
+{% block content %}
+<h1>{% block title %} Mi lista {% endblock %}</h1>
+    
+
+    <table id="formcenter">
+
+        <tr>
+            <th>ID Exámen</th>
+            <th>ID Categoría</th>
+            <th>Tipo de Muestra </th>
+            <th>Precio </th>
+            <th>ID Indicacion </th>
+        
+            
+        </tr>
+        {% for examen in examenList %}
+        <tr>
+            <td>{{ examen.IDExamen }}</td>
+            <td>{{ examen.IDCategoria}} </td>
+            <td>{{ examen.TipoMuestra }} </td>
+            <td>{{ examen.Precio }} </td>
+            <td>{{ examen.IDIndicacion }} </td>
+            <td class="css"> 
+                <button class="css" value="Modificar" onclick="window.location.href='/examenes/update/{{examen._id}}' ;" >Modificar</button> 
+
+                <form action="{{url_for('eliminar_examen', id=examen._id) }}" method="post">
+                    <input class="css" type="submit" value="Eliminar">    
+                </form> 
+                
+            </td>
+
+        </tr>
+
+           
+           
+        {% endfor %}
+    </table>
+{% endblock %}
