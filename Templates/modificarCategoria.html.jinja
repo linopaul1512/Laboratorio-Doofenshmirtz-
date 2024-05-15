@@ -1,13 +1,9 @@
 {% extends 'headerCRUD.html.jinja' %}
 
-
 {% block content %}
 
 
-    
-
-
-    <h1 class="titulo"> {% block title %} Agregue una categoría {% endblock %}</h1>
+    <h1 class="titulo"> {% block title %} Modifique una categoría {% endblock %}</h1>
 
    
 
@@ -15,24 +11,25 @@
 
             <article>
 
-            <div>
-                <input type="hidden" step="de" class="form-control" name="IDCategoria"  
+           <div>
+                <input   type="hidden"  class="form-control" name="IDCategoria" 
                 placeholder="IDCategoria"
-                value="{{ request.form['IDCategoria'] }}">
+                value="{{ categoria.IDCategoria }}">
                 <br>
             </div> 
+
             <div>
                 <label for="Nombre">Nombre: </label><br>
                 <input type="text" class="form-control" name="Nombre" 
                 placeholder="Nombre"
-                value="{{ request.form['Nombre'] }}">
+                value="{{ categoria.Nombre }}">
                 <br>
             </div>
             <div>
                 <label for="Descripcion">Descripción: </label><br>
                 <input type="text" class="form-control" name="Descripcion" 
                 placeholder="Descripcion"
-                value="{{ request.form['Descripcion'] }}">
+                value="{{ categoria.Descripcion }}">
                 <br>
             </div>
            

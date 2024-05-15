@@ -9,19 +9,18 @@
     <table id="formcenter">
 
         <tr>
-            <th>ID Categoria</th>
+            <th>ID Indicación</th>
             <th>Nombre</th>
             <th>Descripcion </th>
         </tr>
-        {% for categoria in categoriaList %}
+        {% for indicacion in indicacionList %}
         <tr>
-            <td>{{ categoria.IDCategoria }}</td>
-            <td>{{ categoria.Nombre}} </td>
-            <td>{{ categoria.Descripcion }} </td>
+            <td>{{ indicacion.IDIndicacion }}</td>
+            <td>{{ indicacion.Descripcion }} </td>
             <td class="css"> 
-                <button class="css" value="Modificar" onclick="window.location.href='/categoria/update/{{categoria._id}}' ;" >Modificar</button> 
+                <button class="css" value="Modificar" onclick="window.location.href='/indicaciones/update/{{indicacion._id}}' ;" >Modificar</button> 
 
-                <form action="{{url_for('eliminar_categoria', id=categoria._id) }}" method="post">
+                <form action="{{url_for('eliminar_indicacion', id=indicacion._id) }}" method="post">
                     <input class="css" type="submit" value="Eliminar">    
                 </form> 
                 

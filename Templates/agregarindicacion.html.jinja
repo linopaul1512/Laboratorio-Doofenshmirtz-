@@ -7,7 +7,7 @@
     
 
 
-    <h1 class="titulo"> {% block title %} Agregue una categoría {% endblock %}</h1>
+    <h1 class="titulo"> {% block title %} Agregue indicaciones {% endblock %}</h1>
 
    
 
@@ -16,18 +16,11 @@
             <article>
 
             <div>
-                <input type="hidden" step="de" class="form-control" name="IDCategoria"  
-                placeholder="IDCategoria"
-                value="{{ request.form['IDCategoria'] }}">
+                <input type="hidden" class="form-control" name="IDIndicacion" 
+                placeholder="IDIndicacion"
+                value="{{ request.form['IDIndicacion'] }}">
                 <br>
             </div> 
-            <div>
-                <label for="Nombre">Nombre: </label><br>
-                <input type="text" class="form-control" name="Nombre" 
-                placeholder="Nombre"
-                value="{{ request.form['Nombre'] }}">
-                <br>
-            </div>
             <div>
                 <label for="Descripcion">Descripción: </label><br>
                 <input type="text" class="form-control" name="Descripcion" 
@@ -35,6 +28,7 @@
                 value="{{ request.form['Descripcion'] }}">
                 <br>
             </div>
+
            
             <input div="formcenter" type="submit" value="Submit">
         </form>
@@ -44,3 +38,4 @@
 
 
 {% endblock %}
+</html>
