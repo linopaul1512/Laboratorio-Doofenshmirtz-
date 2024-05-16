@@ -7,11 +7,11 @@
     
 
 
-    <h1 class="titulo"> {% block title %} Agregue una categoría {% endblock %}</h1>
+    <h1 class="titulo"> {% block title %} Agregue un examen {% endblock %}</h1>
 
    
 
-        <form class method="POST" Content-Type='application/json'>
+        <form method="POST" Content-Type='application/json'>
 
             <article>
 
@@ -21,13 +21,32 @@
                 value="{{ request.form['IDExamen'] }}">
                 <br>
             </div> 
+
             <div>
-                <label for="IDca">Nombre: </label><br>
-                <select class="form-control" name="Nombre" 
+                <label for="IDCategoria">Categorías disponibles: </label><br>
+                <select id="IDCategoria" name="IDCategoria">
+                {% for categoria in categorias %}
+                    <option value="{{ categoria['IDCategoria'] }}">{{ categoria['Nombre'] }}</option>
+                {% endfor %}
+                </select><br>
+            </div>
+            
+            <div>
+                <label for="IDIndicacion">Indicaciones disponibles: </label><br>
+                <select id="IDIndicacion" name="IDIndicacion">
+                {% for indicacion in indicaciones %}
+                    <option value="{{ indicacion['IDIndicacion'] }}">{{ indicacion['Descripcion'] }}</option>
+                {% endfor %}
+                </select><br>
+            </div>
+            
+            <div>
+                <label for="Nombre">Nombre: </label><br>
+                <input type="text" class="form-control" name="Nombre" 
                 placeholder="Nombre"
                 value="{{ request.form['Nombre'] }}">
                 <br>
-            </div><div class="column"><p><h2>Hall of fame</h2></p>{% for table in tables %}{{ table|safe }}{% endfor %}</div>
+            </div>
 
             <div>
                 <label for="TipoMuestra">Tipo de Muestra: </label><br>
@@ -51,11 +70,13 @@
                 <br>
             </div>
            
-            <input div="formcenter" type="submit" value="Submit">
+                <input div="formcenter" type="submit" value="Submit">
+            </article>
         </form>
-        </article>
+        
 
 
 
 
 {% endblock %}
+        

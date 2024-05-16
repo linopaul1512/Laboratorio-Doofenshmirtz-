@@ -3,7 +3,7 @@
 {% block content %}
 
 
-    <h1 class="titulo"> {% block title %} Modifique una categoría {% endblock %}</h1>
+    <h1 class="titulo"> {% block title %} Modifique un examen {% endblock %}</h1>
 
    
 
@@ -20,7 +20,7 @@
 
             <div>
                 <label for="IDCategoria">IDCategoria: </label><br>
-                <input type="text" class="form-control" name="Nombre" 
+                <input type="text" class="form-control" name="IDCategoria" 
                 placeholder="IDCategoria"
                 value="{{ examenes.IDCategoria }}">
                 <br>
@@ -55,3 +55,4 @@
         </article>
 
 
+{% endblock %}

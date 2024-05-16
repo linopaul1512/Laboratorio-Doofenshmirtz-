@@ -9,8 +9,8 @@
     <table id="formcenter">
 
         <tr>
-            <th>ID Exámen</th>
-            <th>ID Categoría</th>
+            <th>Examen</th>
+            <th>Categoría</th>
             <th>Tipo de Muestra </th>
             <th>Precio </th>
             <th>ID Indicacion </th>
@@ -20,13 +20,13 @@
         {% for examen in examenList %}
         <tr>
             <td>{{ examen.IDExamen }}</td>
-            <td>{{ examen.IDCategoria}} </td>
+            <td>{{ examen['IDCategoria'] }} - {{ examen['Nombre'] }}</td> 
             <td>{{ examen.TipoMuestra }} </td>
             <td>{{ examen.Precio }} </td>
-            <td>{{ examen.IDIndicacion }} </td>
+            <td>{{ examen['IDIndicacion'] }} - {{ examen['Descripcion'] }}</td> 
             <td class="css"> 
                 <button class="css" value="Modificar" onclick="window.location.href='/examenes/update/{{examen._id}}' ;" >Modificar</button> 
-
+                <button class="css" value="Consultar" onclick="window.location.href='/examenes/<id>{{examen._id}}' ;" >Ver Detalles</button> 
                 <form action="{{url_for('eliminar_examen', id=examen._id) }}" method="post">
                     <input class="css" type="submit" value="Eliminar">    
                 </form> 
@@ -40,3 +40,6 @@
         {% endfor %}
     </table>
 {% endblock %}
+
+
+

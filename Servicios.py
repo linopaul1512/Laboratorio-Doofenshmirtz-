@@ -3,6 +3,7 @@ from db import Categorias, Indicaciones, Examenes
 from bson.objectid import ObjectId
 import random
 
+
 app = Flask(__name__, template_folder="./Templates")
 app.config['SECRET_KEY'] = "clave secretas"
 
@@ -126,54 +127,70 @@ def eliminar_indicacion(id):
 
 @app.route("/examenes/list", methods=["GET"])
 def getListExamenes():
-    examenesList = Examenes.find()
-    return render_template('lista.html.jinja', examenesList=examenesList)
+    examenList = Examenes.find()
+    return render_template('listaExamen.html.jinja', examenList=examenList)
 
-@app.route('examenes/agregar', methods=['GET', 'POST'])
+@app.route('/examenes/agregar', methods=['GET', 'POST'])
 def agregar_examen():
-    if request.method == "POST"and Categorias:
-        IDExamen= request.form['IDExamen']
+    if request.method == "POST":
+        IDExamen = [random.randint(0, 1000) for _ in range(1)]
         IDCategoria = request.form['IDCategoria']
+        Nombre = request.form['Nombre']
         TipoMuestra = request.form['TipoMuestra']
         Precio = request.form['Precio']
         IDIndicacion = request.form['IDIndicacion']
-        Categorias.find()
 
         object = {
             'IDExamen': IDExamen,
             'IDCategoria' : IDCategoria,
+            'IDIndicacion' : IDIndicacion,
+            'Nombre' : Nombre,
             'TipoMuestra' : TipoMuestra,
             'Precio' : Precio,
             'IDIndicacion' : IDIndicacion
         }
-        Examenes.insert_one(object)
-        return redirect(url_for('getListExamenes'))
-    return render_template("agregarexamen.html.jinja")
 
+        Examenes.insert_one(object) 
+        print(object)
+        return redirect(url_for('getListExamenes'))
+    categorias = Categorias.find()
+    examenes = Examenes.find()
+    indicaciones = Indicaciones.find()
+    return render_template('agregarexamen.html.jinja', categorias=categorias, indicaciones=indicaciones, examenes = examenes)
 
 
 @app.route('/examenes/<id>', methods=['GET'])
 def buscar_examen(id):
     oid = ObjectId(id)
     examenes = examenes.find_one({'_id': oid})
+    #Categorias.find({{Examenes{"IDCategoria"} : {Categorias{"IDCategoria" }} )
+        
+
     return render_template('detail.html.jinja', examenes = examenes)
 
 @app.route('/examenes/update/<id>', methods=['GET', 'POST'])
 def modificar_examen(id):
     oid = ObjectId(id)
     examenes = Examenes.find_one({'_id': oid})
+
     if request.method == "POST":
         new_element = request.form
+        print(new_element)
         Examenes.replace_one({'_id': oid}, 
                                          {'IDExamen': new_element['IDExamen'],
                                           'IDCategoria': new_element['IDCategoria'],
                                           'TipoMuestra': new_element['TipoMuestra'],
                                           'Precio': new_element['Precio'],
                                           'IDIndicacion': new_element['IDIndicacion']
-                                          
+
                                           })    
         return redirect(url_for('getListExamenes'))
     return render_template("modificarExamen.html.jinja", examenes=examenes)
+
+
+
+
+
 
 @app.route('/examenes/delete/<id>', methods=['POST'])
 def eliminar_examen(id):
