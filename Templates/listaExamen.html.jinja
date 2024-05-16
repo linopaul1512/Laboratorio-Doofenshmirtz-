@@ -25,8 +25,9 @@
             <td>{{ examen.Precio }} </td>
             <td>{{ examen['IDIndicacion'] }} - {{ examen['Descripcion'] }}</td> 
             <td class="css"> 
+              
                 <button class="css" value="Modificar" onclick="window.location.href='/examenes/update/{{examen._id}}' ;" >Modificar</button> 
-                <button class="css" value="Consultar" onclick="window.location.href='/examenes/<id>{{examen._id}}' ;" >Ver Detalles</button> 
+                <button class="css" value="Consultar" onclick="window.location.href='/{{examen._id}}' ;" >Ver Detalles</button> 
                 <form action="{{url_for('eliminar_examen', id=examen._id) }}" method="post">
                     <input class="css" type="submit" value="Eliminar">    
                 </form> 
@@ -35,10 +36,9 @@
 
         </tr>
 
-           
+        </table>
            
         {% endfor %}
-    </table>
 {% endblock %}
 
 

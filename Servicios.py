@@ -163,10 +163,14 @@ def agregar_examen():
 def buscar_examen(id):
     oid = ObjectId(id)
     examenes = examenes.find_one({'_id': oid})
-    #Categorias.find({{Examenes{"IDCategoria"} : {Categorias{"IDCategoria" }} )
-        
+    
+    return render_template('detallesExamen.html.jinja', examenes=examenes)
 
-    return render_template('detail.html.jinja', examenes = examenes)
+@app.route('/<id>', methods=['GET'])
+def get_element(id):
+    oid = ObjectId(id)
+    element = Examenes.find_one({'_id': oid})
+    return render_template('detallesExamen.html.jinja', element = element)
 
 @app.route('/examenes/update/<id>', methods=['GET', 'POST'])
 def modificar_examen(id):
@@ -188,10 +192,6 @@ def modificar_examen(id):
     return render_template("modificarExamen.html.jinja", examenes=examenes)
 
 
-
-
-
-
 @app.route('/examenes/delete/<id>', methods=['POST'])
 def eliminar_examen(id):
     oid = ObjectId(id)
@@ -200,6 +200,53 @@ def eliminar_examen(id):
 
 
 
+#Métedos para el reporte
+@app.route('/report')
+def mostrar_reporte():
+    # Generamos los datos necesarios para el informe
+    examenesxcategoria = {}
+    for exam in Examenes.find():
+        categoria = Categorias.find_one({'_id': exam['IDCategoria']})
+        categoria_nombre = categoria['Nombre']
+        if categoria_nombre in examenesxcategoria:
+            examenesxcategoria[categoria_nombre] += 1
+        else:
+            examenesxcategoria[categoria_nombre] = 1
+
+    # Contar cuántas veces se repite cada IDIndicacion en los exámenes
+    indicaciones_contador = {}
+    for exam in Examenes.find():
+        id_indicacion = exam['IDIndicacion']
+        if id_indicacion in indicaciones_contador:
+            indicaciones_contador[id_indicacion] += 1
+        else:
+            indicaciones_contador[id_indicacion] = 1
+
+    # Encontrar la indicación más común
+    indicacionmascomun_id = max(indicaciones_contador, key=indicaciones_contador.get)
+    indicacionmascomun = Indicaciones.find_one({'_id': indicacionmascomun_id})['Descripcion']
+
+    intervalodeprecios = {
+        '1-100': 0,
+        '101-200': 0,
+        '201-300': 0,
+        '301-500': 0,
+        '501+': 0
+    }
+    for exam in Examenes.find():
+        precio = exam['Precio']
+        if precio <= 100:
+            intervalodeprecios['1-100'] += 1
+        elif precio <= 200:
+            intervalodeprecios['101-200'] += 1
+        elif precio <= 300:
+            intervalodeprecios['201-300'] += 1
+        elif precio <= 500:
+            intervalodeprecios['301-500'] += 1
+        else:
+            intervalodeprecios['501+'] += 1
+
+    return render_template('reporte.html.jinja', examenesxcategoria=examenesxcategoria, indicacionmascomun=indicacionmascomun, intervalodeprecios=intervalodeprecios)
 
 if __name__ == "__main__":
     app.run(debug=True)

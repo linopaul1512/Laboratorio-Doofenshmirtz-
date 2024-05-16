@@ -1,0 +1,17 @@
+{% extends 'base.html.jinja' %}
+
+{% block content %}
+<h1>{% block title %} Examen{% endblock %}</h1>
+    <ul>
+        <li>
+           Categoria: {{ element.IDCategoria }} 
+           TipoMuestra: {{ element.TipoMuestra }} 
+           Precio: {{ element.Precio }} 
+           Indicaciones: {{ element.IDIndicacion }} 
+        </li>
+    </ul>
+{% endblock %}
+
+
+
+
