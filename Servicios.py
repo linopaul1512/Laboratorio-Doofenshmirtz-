@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for, flash
 from db import Categorias, Indicaciones, Examenes
 from bson.objectid import ObjectId
 import random
-
+from collections import Counter
 
 app = Flask(__name__, template_folder="./Templates")
 app.config['SECRET_KEY'] = "clave secretas"
@@ -35,16 +35,6 @@ def agregar_categoria():
         return redirect(url_for('getListCategorias'))
     return render_template("agregarcategoria.html.jinja")
 
-
-"""
-@app.route('/<id>', methods=['GET'])
-def buscar_categoria(id):
-    oid = ObjectId(id)
-    categoria = Categorias.find_one({'_id': oid})
-    return render_template('detail.html.jinja', categoria = categoria)
-"""
-
-
 @app.route('/categoria/update/<id>', methods=['GET', 'POST'])
 def modificar_categoria(id):
     oid = ObjectId(id)
@@ -57,9 +47,6 @@ def modificar_categoria(id):
                                             'Descripcion': new_element['Descripcion']})    
         return redirect(url_for('getListCategorias'))
     return render_template("modificarCategoria.html.jinja", categoria = categoria)
-
-
-
 
 @app.route('/categoria/delete/<id>', methods=['POST'])
 def eliminar_categoria(id):
@@ -92,15 +79,6 @@ def agregar_indicacion():
     return render_template("agregarIndicacion.html.jinja")
 
 
-"""
-@app.route('/<id>', methods=['GET'])
-def buscar_indicacion(id):
-    oid = ObjectId(id)
-    indicaciones = Indicaciones.find_one({'_id': oid})
-    return render_template('detail.html.jinja', indicaciones = indicaciones)
-
-"""
-
 @app.route('/indicaciones/update/<id>', methods=['GET', 'POST'])
 def modificar_indicacion(id):
     oid = ObjectId(id)
@@ -108,10 +86,10 @@ def modificar_indicacion(id):
     if request.method == "POST":
         new_element = request.form
         Indicaciones.replace_one({'_id': oid}, 
-                                         {'Descripcion': new_element['Descripcion']})    
+                                         {'IDIndicacion': new_element['IDIndicacion'],
+                                          'Descripcion': new_element['Descripcion']})    
         return redirect(url_for('getListIndicaciones'))
     return render_template("modificarIndicacion.html.jinja", indicacion=indicacion)
-
 
 
 @app.route('/indicaciones/delete/<id>', methods=['POST'])
@@ -119,8 +97,6 @@ def eliminar_indicacion(id):
     oid = ObjectId(id)
     indicaciones = Indicaciones.delete_one({'_id': oid})
     return redirect(url_for('getListIndicaciones'))
-
-
 
 
 #CRUD de examenes
@@ -137,7 +113,7 @@ def agregar_examen():
         IDCategoria = request.form['IDCategoria']
         Nombre = request.form['Nombre']
         TipoMuestra = request.form['TipoMuestra']
-        Precio = request.form['Precio']
+        Precio = int(request.form['Precio'])
         IDIndicacion = request.form['IDIndicacion']
 
         object = {
@@ -147,7 +123,6 @@ def agregar_examen():
             'Nombre' : Nombre,
             'TipoMuestra' : TipoMuestra,
             'Precio' : Precio,
-            'IDIndicacion' : IDIndicacion
         }
 
         Examenes.insert_one(object) 
@@ -158,19 +133,26 @@ def agregar_examen():
     indicaciones = Indicaciones.find()
     return render_template('agregarexamen.html.jinja', categorias=categorias, indicaciones=indicaciones, examenes = examenes)
 
-
-@app.route('/examenes/<id>', methods=['GET'])
+@app.route('/<id>', methods=['GET'])
 def buscar_examen(id):
     oid = ObjectId(id)
-    examenes = examenes.find_one({'_id': oid})
+    examen = Examenes.find_one({'_id': oid})
     
-    return render_template('detallesExamen.html.jinja', examenes=examenes)
+    # Buscar nombre de la categoría
+    categoria = Categorias.find_one({"IDCategoria": examen["IDCategoria"]})
+    if categoria:
+        NombreCategoria = categoria.get("Nombre", "No encontrado")
+    else:
+        NombreCategoria = "No encontrado"
 
-@app.route('/<id>', methods=['GET'])
-def get_element(id):
-    oid = ObjectId(id)
-    element = Examenes.find_one({'_id': oid})
-    return render_template('detallesExamen.html.jinja', element = element)
+    # Buscar descripción de las indicaciones
+    indicacion = Indicaciones.find_one({"IDIndicacion": examen["IDIndicacion"]})
+    if indicacion:
+        DescripcionIndicacion = indicacion.get("Descripcion", "No encontrado")
+    else:
+        DescripcionIndicacion = "No encontrado"
+
+    return render_template('detallesExamen.html.jinja', examen=examen, DescripcionIndicacion=DescripcionIndicacion, NombreCategoria=NombreCategoria)
 
 @app.route('/examenes/update/<id>', methods=['GET', 'POST'])
 def modificar_examen(id):
@@ -191,41 +173,50 @@ def modificar_examen(id):
         return redirect(url_for('getListExamenes'))
     return render_template("modificarExamen.html.jinja", examenes=examenes)
 
-
 @app.route('/examenes/delete/<id>', methods=['POST'])
 def eliminar_examen(id):
     oid = ObjectId(id)
     examenes = Examenes.delete_one({'_id': oid})
     return redirect(url_for('getListExamenes'))
 
-
-
-#Métedos para el reporte
+#reporte
 @app.route('/report')
 def mostrar_reporte():
-    # Generamos los datos necesarios para el informe
-    examenesxcategoria = {}
-    for exam in Examenes.find():
-        categoria = Categorias.find_one({'_id': exam['IDCategoria']})
-        categoria_nombre = categoria['Nombre']
-        if categoria_nombre in examenesxcategoria:
-            examenesxcategoria[categoria_nombre] += 1
+    # Contabilizar categoría 
+    cancategorias = {}
+    for examen in Examenes.find():
+        categoria = Categorias.find_one({'IDCategoria': examen['IDCategoria']})
+        if categoria:
+            categoriaid = str(categoria['_id'])
+            if categoriaid in cancategorias:
+                cancategorias[categoriaid] += 1
+            else:
+                cancategorias[categoriaid] = 1
+
+    # Contabilizar las indicaciones
+    canindicaciones = {}
+    for examen in Examenes.find():
+        indicacion = Indicaciones.find_one({'IDIndicacion': examen['IDIndicacion']})
+        if indicacion: 
+            indicacionid = str(indicacion['_id'])
+            if indicacionid in canindicaciones:
+                canindicaciones[indicacionid] += 1
+            else:
+                canindicaciones[indicacionid] = 1
+
+
+    # Indicar la indicación más común
+    if canindicaciones:
+        indicacionmascomun_id = max(canindicaciones, key=canindicaciones.get)
+        indicacionmascomun_doc = Indicaciones.find_one({'_id': ObjectId(indicacionmascomun_id)})
+        if indicacionmascomun_doc:
+            indicacionmascomun = indicacionmascomun_doc.get('Descripcion', 'No encontrado')
         else:
-            examenesxcategoria[categoria_nombre] = 1
+            indicacionmascomun = 'No encontrado'
+    else:
+        indicacionmascomun = 'No encontrado'
 
-    # Contar cuántas veces se repite cada IDIndicacion en los exámenes
-    indicaciones_contador = {}
-    for exam in Examenes.find():
-        id_indicacion = exam['IDIndicacion']
-        if id_indicacion in indicaciones_contador:
-            indicaciones_contador[id_indicacion] += 1
-        else:
-            indicaciones_contador[id_indicacion] = 1
-
-    # Encontrar la indicación más común
-    indicacionmascomun_id = max(indicaciones_contador, key=indicaciones_contador.get)
-    indicacionmascomun = Indicaciones.find_one({'_id': indicacionmascomun_id})['Descripcion']
-
+    # Intervalo de precios
     intervalodeprecios = {
         '1-100': 0,
         '101-200': 0,
@@ -233,8 +224,9 @@ def mostrar_reporte():
         '301-500': 0,
         '501+': 0
     }
-    for exam in Examenes.find():
-        precio = exam['Precio']
+
+    for examen in Examenes.find():
+        precio = examen['Precio']
         if precio <= 100:
             intervalodeprecios['1-100'] += 1
         elif precio <= 200:
@@ -246,7 +238,14 @@ def mostrar_reporte():
         else:
             intervalodeprecios['501+'] += 1
 
-    return render_template('reporte.html.jinja', examenesxcategoria=examenesxcategoria, indicacionmascomun=indicacionmascomun, intervalodeprecios=intervalodeprecios)
+
+        print(intervalodeprecios)
+
+        return render_template('reporte.html.jinja', cancategorias=cancategorias, indicacionmascomun=indicacionmascomun, intervalodeprecios=intervalodeprecios)
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+

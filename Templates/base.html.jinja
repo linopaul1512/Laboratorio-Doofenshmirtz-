@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,12 +8,32 @@
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
-    <nav>
-        <a href="{{url_for('agregar_categoria')}}">Agregar Categoría</a>
-        <a href="{{url_for('agregar_indicacion')}}">Agregar Indicaciones</a>
-        <a href="{{url_for('agregar_examen')}}">Agregar exámen</a>
-        <a href="{{url_for('mostrar_reporte')}}">Ver reporte</a>
-    </nav>
+
+
+
+    <header>
+                <img src="\static/img/Icono.png" alt="Logo">
+                <nav>
+                    <a href="{{url_for('agregar_categoria')}}">Agregar Categoría</a>
+                    <a href="{{url_for('agregar_indicacion')}}">Agregar Indicaciones</a>
+                    <a href="{{url_for('agregar_examen')}}">Agregar examen</a>
+                    <a href="{{url_for('mostrar_reporte')}}">Ver reporte</a>
+                    <a href="{{url_for('getListCategorias')}}">Lista de categorías</a>
+                    <a href="{{url_for('getListIndicaciones')}}">Lista de indicaciones</a>
+                    <a href="{{url_for('getListExamenes')}}">Lista de examenes</a>
+
+                </nav>
+            
+    </header>
+        
+            
+            
+    <div class="banner">
+        <img class="Banner_img" src="\static\img/Banner_1.png" alt="Banner_1"> 
+    </div>
+    
+
+
    <div class="content">
     {% block content %} {% endblock %}
    </div> 

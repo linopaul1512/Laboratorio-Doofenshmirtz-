@@ -15,32 +15,31 @@
 
             <article>
 
-            <div>
-                <input type="hidden" step="de" class="form-control" name="IDCategoria"  
-                placeholder="IDCategoria"
-                value="{{ request.form['IDCategoria'] }}">
-                <br>
-            </div> 
-            <div>
-                <label for="Nombre">Nombre: </label><br>
-                <input type="text" class="form-control" name="Nombre" 
-                placeholder="Nombre"
-                value="{{ request.form['Nombre'] }}">
-                <br>
-            </div>
-            <div>
-                <label for="Descripcion">Descripción: </label><br>
-                <input type="text" class="form-control" name="Descripcion" 
-                placeholder="Descripcion"
-                value="{{ request.form['Descripcion'] }}">
-                <br>
-            </div>
-           
-            <input div="formcenter" type="submit" value="Submit">
+                <div>
+                    <input type="hidden" step="de" class="form-control" name="IDCategoria"  
+                    placeholder="IDCategoria"
+                    value="{{ request.form['IDCategoria'] }}">
+                    <br>
+                </div> 
+                <div>
+                    <label for="Nombre">Nombre: </label><br>
+                    <input type="text" class="form-control" name="Nombre" 
+                    placeholder="Nombre"
+                    value="{{ request.form['Nombre'] }}">
+                    <br>
+                </div>
+                <div>
+                    <label for="Descripcion">Descripción: </label><br>
+                    <input type="text" class="form-control" name="Descripcion" 
+                    placeholder="Descripcion"
+                    value="{{ request.form['Descripcion'] }}">
+                    <br>
+                </div>
+            
+                <input div="formcenter" type="submit" value="Submit">
+            </article>
         </form>
-        </article>
 
-
-
+        
 
 {% endblock %}
