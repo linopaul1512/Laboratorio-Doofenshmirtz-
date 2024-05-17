@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" type="text/css"/>
+
+    <title>{% block title %} {% endblock %}</title>
+</head>
+<body>
+
+
+
+    <header>
+                <img src="\static/img/Icono.png" alt="Logo">
+                <nav>
+                    <li><a href="{{ url_for('hogar_no_registado') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('iniciar_sesion') }}">Iniciar sesión</a></li>
+                    <li><a href="{{ url_for('agregar_usuario') }}">Registrarse</a></li>
+                </nav>
+            
+    </header>
+        
+            
+            
+    <div class="banner">
+        <img class="Banner_img" src="\static\img/Banner_1.png" alt="Banner_1"> 
+    </div>
+
+
+    <main>
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="flash-{{ categoria }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+    
+
+
+
+</body>
+</html>

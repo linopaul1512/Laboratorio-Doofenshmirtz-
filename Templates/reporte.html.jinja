@@ -9,10 +9,10 @@
     <th>Categoría</th>
     <th>Cantidad de Exámenes</th>
   </tr>
-  {% for intervalo, cantidad in intervalodeprecios.items() %}
+  {% for categoria in cate%}
       <tr>
-          <td>{{ intervalo }}</td>
-          <td>{{ cantidad }}</td>
+          <td>{{ categoria.Nombre }}</td>
+          <td>{{ cantidad.cancategorias }}</td>
       </tr>
   {% endfor %}
 

@@ -1,17 +1,89 @@
-from flask import Flask, request, render_template, redirect, url_for, flash
-from db import Categorias, Indicaciones, Examenes
+from flask import Flask, request, render_template, redirect, url_for, flash, session
+from db import Categorias, Indicaciones, Examenes, Usuarios
 from bson.objectid import ObjectId
 import random
 from collections import Counter
-
+#hola
 app = Flask(__name__, template_folder="./Templates")
-app.config['SECRET_KEY'] = "clave secretas"
+app.config['SECRET_KEY'] = "clave secreta"
 
 categoriaList = []
 indicacionList = []
 examenList = []
+usuarioList = []
+
+#Método para verificar si el usuaio entrante inició sesión
+def validar_sesion():
+    print('username' not in session)
+    if 'username' not in session:
+        flash('Debes iniciar sesión para acceder a esta página', 'Error')
+        return redirect(url_for('iniciar_sesion'))
+
+# Ruta de inicio para usuarios no logeados
+@app.route('/', methods=['GET'])
+def hogar_no_registado():
+    if 'Usuario' in session:
+        return redirect(url_for('hogar_registrados'))
+    return render_template('hogarnoregistrados.html.jinja')
 
 
+#Método para registrar usuario
+@app.route('/register', methods=['GET', 'POST'])
+def agregar_usuario():
+    if request.method == 'POST':
+        Usuario = request.form['Usuario']
+        Contrasena = request.form['Contrasena']
+        ContrasenaConfirmada = request.form['ContrasenaConfirmada']
+        if Contrasena == ContrasenaConfirmada:
+            usuaarioexistente = Usuarios.find_one({"Usuario": Usuario})
+            if usuaarioexistente:
+                flash('El nombre de usuario ya existe. Por favor, elige otro.', 'Error')
+            else:
+                nuevousuario = {"Usuario": Usuario, "Contrasena": Contrasena}
+                Usuarios.insert_one(nuevousuario)
+                flash('Usuario registrado correctamente.', 'Ëxito')
+                return redirect(url_for('login'))
+        else:
+            flash('Contraseña incorrrecta.', 'Error')
+    return render_template('agregarusuario.html.jinja')
+
+# Meétodo para iniciar sesión
+@app.route('/login', methods=['GET', 'POST'])
+def iniciar_sesion():
+    if request.method == 'POST':
+        Usuario = request.form['Usuario']
+        Contrasena = request.form['Contrasena']
+        usuario = Usuarios.find_one({"username": Usuario})
+        if usuario and usuario['Contrasena'] == Contrasena:
+            session['Usuario'] = Usuario
+            flash('Se inició sesión correctamente', 'Ëxito')
+            return redirect(url_for('base.html.jinja'))  # Redirige al layout después de iniciar sesión
+        else:
+            flash('Los datos ingresados son erróneos', 'Error')
+    return render_template('iniciarsesion.html.jinja')
+
+# Método para renderizar 
+@app.route('/render_layout')
+def renderizar():
+    validar_sesion()
+    return render_template('base.html.jinja')
+
+#Método para cerrar sesión
+@app.route('/logout', methods=['GET'])
+def logout():
+    session.pop('Usuario', None)
+    return redirect(url_for('hogar_no_registado'))
+
+
+# Ruta de inicio para usuarios logeados
+@app.route('/home', methods=['GET', 'POST'])
+def hogar_registrados():
+    validar_sesion()
+    return redirect(url_for('renderizar')) 
+
+
+
+#CRUD para categoría
 @app.route("/categoria/list", methods=["GET"])
 def getListCategorias():
     categoriaList = Categorias.find()
@@ -183,7 +255,7 @@ def eliminar_examen(id):
 @app.route('/report')
 def mostrar_reporte():
     # Contabilizar categoría 
-    cancategorias = {}
+    cancategorias = []
     for examen in Examenes.find():
         categoria = Categorias.find_one({'IDCategoria': examen['IDCategoria']})
         if categoria:
@@ -194,7 +266,7 @@ def mostrar_reporte():
                 cancategorias[categoriaid] = 1
 
     # Contabilizar las indicaciones
-    canindicaciones = {}
+    canindicaciones = []
     for examen in Examenes.find():
         indicacion = Indicaciones.find_one({'IDIndicacion': examen['IDIndicacion']})
         if indicacion: 
@@ -242,6 +314,34 @@ def mostrar_reporte():
         print(intervalodeprecios)
 
         return render_template('reporte.html.jinja', cancategorias=cancategorias, indicacionmascomun=indicacionmascomun, intervalodeprecios=intervalodeprecios)
+
+#Catálogo
+@app.route("/catalogo/list", methods=["GET"])
+def getListCatalogo():
+    examenList = Examenes.find()
+    return render_template('catalogo.html.jinja', examenList=examenList)
+
+
+@app.route('/catalogo/update/<id>', methods=['GET', 'POST'])
+def modificar_examen_catalogo(id):
+    oid = ObjectId(id)
+    examenes = Examenes.find_one({'_id': oid})
+
+    if request.method == "POST":
+        new_element = request.form
+        print(new_element)
+        Examenes.replace_one({'_id': oid}, 
+                                         {'IDExamen': new_element['IDExamen'],
+                                          'IDCategoria': new_element['IDCategoria'],
+                                          'TipoMuestra': new_element['TipoMuestra'],
+                                          'Precio': new_element['Precio'],
+                                          'IDIndicacion': new_element['IDIndicacion']
+
+                                          })    
+        return redirect(url_for('getListCatalogo'))
+    return render_template("modificarExamen.html.jinja", examenes=examenes)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,38 @@
+{% extends 'headerCRUD.html.jinja' %}
+
+
+{% block content %}
+
+
+    
+
+
+    <h1 class="titulo"> {% block title %} Iniciar sesión {% endblock %}</h1>
+
+   
+
+        <form class method="POST" Content-Type='application/json'>
+
+            <article>
+
+                <div>
+                    <label for="Usuario">Nombre de usuario: </label><br>
+                    <input type="text"  class="form-control" name="Usuario"  
+                    placeholder="Usuario"
+                    <br>
+                </div> 
+                <div>
+                    <label for="Contrasena">Contraseña: </label><br>
+                    <input type="text" class="form-control" name="Contrasena" 
+                    placeholder="Contrasena"
+                    <br>
+                </div>
+            
+            
+                <input div="formcenter" type="submit" value="Submit">
+            </article>
+        </form>
+
+        
+
+{% endblock %}
