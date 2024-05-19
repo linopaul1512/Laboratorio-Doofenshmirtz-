@@ -7,7 +7,7 @@
     
 
 
-    <h1 class="titulo"> {% block title %} Agregue una categoría {% endblock %}</h1>
+    <h1 class="titulo"> {% block title %} Cree su usuario {% endblock %}</h1>
 
    
 
@@ -15,25 +15,33 @@
 
             <article>
 
+                
+                
                 <div>
-                    <input type="Nombre" step="de" class="form-control" name="Nombre"  
-                    placeholder="Nombre"
-                    <br>
-                </div> 
-                <div>
-                    <label for="Usuario">Nombre de usuario: </label><br>
-                    <input type="text" class="form-control" name="Usuario">
+                    <label for="Usuario">Nombre de usuario:: </label><br>
+                    <input type="text" class="form-control" name="Usuario" 
                     placeholder="Usuario"
+                    value="{{ request.form['Usuario'] }}">
                     <br>
                 </div>
                 <div>
                     <label for="Contrasena">Contraseña: </label><br>
-                    <input type="text" class="form-control" name="Contrasena" 
+                    <input type="password" class="form-control" name="Contrasena" 
                     placeholder="Contrasena"
+                    value="{{ request.form['Contrasena'] }}">
                     <br>
                 </div>
+                <div> 
+                    <label for="ContrasenaConfirmada">Confirma la contraseña: </label><br>
+                    <input type="password" class="form-control" name="ContrasenaConfirmada" 
+                    placeholder="ContrasenaConfirmada"
+                    value="{{ request.form['ContrasenaConfirmada'] }}">
+                    <br>
+                </div>
+        
             
-                <input div="formcenter" type="submit" value="Submit">
+                <input div="formcenter" type="submit" value="Submit"> 
+                <br>
                 <a href="{{url_for('iniciar_sesion')}}"> ¿Ya tienes cuenta? Iniciar sesión</a>
             </article>
         </form>

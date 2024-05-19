@@ -3,9 +3,9 @@ from db import Categorias, Indicaciones, Examenes, Usuarios
 from bson.objectid import ObjectId
 import random
 from collections import Counter
-#hola
+
 app = Flask(__name__, template_folder="./Templates")
-app.config['SECRET_KEY'] = "clave secreta"
+app.config  ['SECRET_KEY'] = "clave secreta"
 
 categoriaList = []
 indicacionList = []
@@ -42,7 +42,7 @@ def agregar_usuario():
                 nuevousuario = {"Usuario": Usuario, "Contrasena": Contrasena}
                 Usuarios.insert_one(nuevousuario)
                 flash('Usuario registrado correctamente.', 'Ëxito')
-                return redirect(url_for('login'))
+                return redirect(url_for('iniciar_sesion'))
         else:
             flash('Contraseña incorrrecta.', 'Error')
     return render_template('agregarusuario.html.jinja')
@@ -53,13 +53,19 @@ def iniciar_sesion():
     if request.method == 'POST':
         Usuario = request.form['Usuario']
         Contrasena = request.form['Contrasena']
-        usuario = Usuarios.find_one({"username": Usuario})
+        usuario = Usuarios.find_one({"Usuario": Usuario})
+        # Si se encuentra un usuario y la contraseña ingresada coincide con la almacenada en la base de datos
         if usuario and usuario['Contrasena'] == Contrasena:
+            # Almacena el nombre de usuario en la sesión para indicar que el usuario ha iniciado sesión
             session['Usuario'] = Usuario
-            flash('Se inició sesión correctamente', 'Ëxito')
-            return redirect(url_for('base.html.jinja'))  # Redirige al layout después de iniciar sesión
+            # Muestra un mensaje de éxito al usuario
+            flash('Se inició sesión correctamente', 'Éxito')
+            # Redirige al usuario a la función 'renderizar'
+            return redirect(url_for('renderizar'))
         else:
+            # Si los datos ingresados son incorrectos, muestra un mensaje de error
             flash('Los datos ingresados son erróneos', 'Error')
+    # Si el usuario accede a la página de inicio de sesión, renderiza la plantilla de inicio de sesión
     return render_template('iniciarsesion.html.jinja')
 
 # Método para renderizar 
@@ -70,12 +76,12 @@ def renderizar():
 
 #Método para cerrar sesión
 @app.route('/logout', methods=['GET'])
-def logout():
+def cerrar_sesion():
     session.pop('Usuario', None)
     return redirect(url_for('hogar_no_registado'))
 
 
-# Ruta de inicio para usuarios logeados
+# Método para reedirigir a los usuarios que iniciaron sesión
 @app.route('/home', methods=['GET', 'POST'])
 def hogar_registrados():
     validar_sesion()
@@ -86,12 +92,13 @@ def hogar_registrados():
 #CRUD para categoría
 @app.route("/categoria/list", methods=["GET"])
 def getListCategorias():
+    validar_sesion()
     categoriaList = Categorias.find()
     return render_template('listaCategoria.html.jinja', categoriaList=categoriaList)
 
 @app.route('/categoria/agregar', methods=['GET', 'POST'])
 def agregar_categoria():
-
+    validar_sesion()
     if request.method == "POST":
         IDCategoria = [random.randint(0, 1000) for _ in range(1)]
         Nombre = request.form['Nombre']
@@ -109,6 +116,7 @@ def agregar_categoria():
 
 @app.route('/categoria/update/<id>', methods=['GET', 'POST'])
 def modificar_categoria(id):
+    validar_sesion()
     oid = ObjectId(id)
     categoria = Categorias.find_one({'_id': oid})
     if request.method == "POST":
@@ -122,6 +130,7 @@ def modificar_categoria(id):
 
 @app.route('/categoria/delete/<id>', methods=['POST'])
 def eliminar_categoria(id):
+    validar_sesion()
     oid = ObjectId(id)
     categoria = Categorias.delete_one({'_id': oid})
     return redirect(url_for('getListCategorias'))
@@ -132,11 +141,13 @@ def eliminar_categoria(id):
 
 @app.route("/indicaciones/list", methods=["GET"])
 def getListIndicaciones():
+    validar_sesion()
     indicacionList = Indicaciones.find()
     return render_template('listaIndicacion.html.jinja', indicacionList=indicacionList)
 
 @app.route('/indicaciones/agregar', methods=['GET', 'POST'])
 def agregar_indicacion():
+    validar_sesion()
     if request.method == "POST":
         IDIndicacion = [random.randint(0, 1000) for _ in range(1)]
         Descripcion = request.form['Descripcion']
@@ -153,6 +164,7 @@ def agregar_indicacion():
 
 @app.route('/indicaciones/update/<id>', methods=['GET', 'POST'])
 def modificar_indicacion(id):
+    validar_sesion()
     oid = ObjectId(id)
     indicacion = Indicaciones.find_one({'_id': oid})
     if request.method == "POST":
@@ -166,6 +178,7 @@ def modificar_indicacion(id):
 
 @app.route('/indicaciones/delete/<id>', methods=['POST'])
 def eliminar_indicacion(id):
+    validar_sesion()
     oid = ObjectId(id)
     indicaciones = Indicaciones.delete_one({'_id': oid})
     return redirect(url_for('getListIndicaciones'))
@@ -175,11 +188,13 @@ def eliminar_indicacion(id):
 
 @app.route("/examenes/list", methods=["GET"])
 def getListExamenes():
+    validar_sesion()
     examenList = Examenes.find()
     return render_template('listaExamen.html.jinja', examenList=examenList)
 
 @app.route('/examenes/agregar', methods=['GET', 'POST'])
 def agregar_examen():
+    validar_sesion()
     if request.method == "POST":
         IDExamen = [random.randint(0, 1000) for _ in range(1)]
         IDCategoria = request.form['IDCategoria']
@@ -207,27 +222,18 @@ def agregar_examen():
 
 @app.route('/<id>', methods=['GET'])
 def buscar_examen(id):
+    validar_sesion()
     oid = ObjectId(id)
     examen = Examenes.find_one({'_id': oid})
+    categoria = Categorias.find_one()
+    indicacion = Indicaciones.find_one()
     
-    # Buscar nombre de la categoría
-    categoria = Categorias.find_one({"IDCategoria": examen["IDCategoria"]})
-    if categoria:
-        NombreCategoria = categoria.get("Nombre", "No encontrado")
-    else:
-        NombreCategoria = "No encontrado"
 
-    # Buscar descripción de las indicaciones
-    indicacion = Indicaciones.find_one({"IDIndicacion": examen["IDIndicacion"]})
-    if indicacion:
-        DescripcionIndicacion = indicacion.get("Descripcion", "No encontrado")
-    else:
-        DescripcionIndicacion = "No encontrado"
-
-    return render_template('detallesExamen.html.jinja', examen=examen, DescripcionIndicacion=DescripcionIndicacion, NombreCategoria=NombreCategoria)
+    return render_template('detallesExamen.html.jinja', examen=examen, indicacion=indicacion, categoria=categoria)
 
 @app.route('/examenes/update/<id>', methods=['GET', 'POST'])
 def modificar_examen(id):
+    validar_sesion()
     oid = ObjectId(id)
     examenes = Examenes.find_one({'_id': oid})
 
@@ -243,10 +249,14 @@ def modificar_examen(id):
 
                                           })    
         return redirect(url_for('getListExamenes'))
-    return render_template("modificarExamen.html.jinja", examenes=examenes)
+    categorias = Categorias.find()
+    examenes = Examenes.find()
+    indicaciones = Indicaciones.find()
+    return render_template("modificarExamen.html.jinja", categorias=categorias, indicaciones=indicaciones, examenes = examenes)
 
 @app.route('/examenes/delete/<id>', methods=['POST'])
 def eliminar_examen(id):
+    validar_sesion()
     oid = ObjectId(id)
     examenes = Examenes.delete_one({'_id': oid})
     return redirect(url_for('getListExamenes'))
@@ -254,76 +264,60 @@ def eliminar_examen(id):
 #reporte
 @app.route('/report')
 def mostrar_reporte():
-    # Contabilizar categoría 
-    cancategorias = []
-    for examen in Examenes.find():
-        categoria = Categorias.find_one({'IDCategoria': examen['IDCategoria']})
-        if categoria:
-            categoriaid = str(categoria['_id'])
-            if categoriaid in cancategorias:
-                cancategorias[categoriaid] += 1
-            else:
-                cancategorias[categoriaid] = 1
+    validar_sesion()
 
-    # Contabilizar las indicaciones
-    canindicaciones = []
-    for examen in Examenes.find():
-        indicacion = Indicaciones.find_one({'IDIndicacion': examen['IDIndicacion']})
-        if indicacion: 
-            indicacionid = str(indicacion['_id'])
-            if indicacionid in canindicaciones:
-                canindicaciones[indicacionid] += 1
-            else:
-                canindicaciones[indicacionid] = 1
+    # Calcular la indicación más común
+    indicacionList = [examen['IDIndicacion'] for examen in Examenes.find()]
+    indicacion_counter = Counter(indicacionList)
+    indicacionmascomun = indicacion_counter.most_common(1)[0][0]
 
+    """
+    Intente  de que mostrara la descripción pero me daba error NoneType:
 
-    # Indicar la indicación más común
-    if canindicaciones:
-        indicacionmascomun_id = max(canindicaciones, key=canindicaciones.get)
-        indicacionmascomun_doc = Indicaciones.find_one({'_id': ObjectId(indicacionmascomun_id)})
-        if indicacionmascomun_doc:
-            indicacionmascomun = indicacionmascomun_doc.get('Descripcion', 'No encontrado')
-        else:
-            indicacionmascomun = 'No encontrado'
-    else:
-        indicacionmascomun = 'No encontrado'
+    indicacionList = [examen['IDIndicacion'] for examen in Examenes.find()]
+    indicacion_counter = Counter(indicacionList)
+    indicacionmascomunid = indicacion_counter.most_common(1)[0][0]
+    indicacionmascomun = Indicaciones.find_one({'_id': indicacionmascomunid})['Descripcion']
 
-    # Intervalo de precios
-    intervalodeprecios = {
-        '1-100': 0,
-        '101-200': 0,
-        '201-300': 0,
-        '301-500': 0,
-        '501+': 0
-    }
+    """
+    
+    #La librería Counter aquí ayudío bastante y me redujo mi código en Servicios    
+    # Contar cuántos exámenes hay por cada categoría
+    cantcategorias = Counter([str(examen['IDCategoria']) for examen in Examenes.find()])
+    categoriasbusq = {str(categoria['IDCategoria']): categoria['Nombre'] for categoria in Categorias.find()}
+    print("Cantidad de categorías:", cantcategorias)
+    print("Categorias Dict:", categoriasbusq)
 
-    for examen in Examenes.find():
-        precio = examen['Precio']
-        if precio <= 100:
-            intervalodeprecios['1-100'] += 1
-        elif precio <= 200:
-            intervalodeprecios['101-200'] += 1
-        elif precio <= 300:
-            intervalodeprecios['201-300'] += 1
-        elif precio <= 500:
-            intervalodeprecios['301-500'] += 1
-        else:
-            intervalodeprecios['501+'] += 1
+    intervalodeprecios = [
+        Examenes.count_documents({"Precio": {"$lte": 100}}),
+        Examenes.count_documents({"Precio": {"$gt": 100, "$lte": 200}}),
+        Examenes.count_documents({"Precio": {"$gt": 200, "$lte": 300}}),
+        Examenes.count_documents({"Precio": {"$gt": 300, "$lte": 500}}),
+        Examenes.count_documents({"Precio": {"$gt": 500}})
+    ]
+    # count_documents es una función de pymongo que contabiliza la cantidad de documentos en una colleción
+    # en mi caso me ayudó bastante porque la entructura condicional que hice con contadores tradicionales no  estaban funcionando
+    print(intervalodeprecios)
 
+    return render_template('reporte.html.jinja',categoriasbusq=categoriasbusq, cantcategorias= cantcategorias,indicacionmascomun=indicacionmascomun, intervalodeprecios= intervalodeprecios)
 
-        print(intervalodeprecios)
-
-        return render_template('reporte.html.jinja', cancategorias=cancategorias, indicacionmascomun=indicacionmascomun, intervalodeprecios=intervalodeprecios)
 
 #Catálogo
 @app.route("/catalogo/list", methods=["GET"])
 def getListCatalogo():
+    validar_sesion()
     examenList = Examenes.find()
-    return render_template('catalogo.html.jinja', examenList=examenList)
+    categoriaList = Categorias.find()
+    
+    return render_template('catalogo.html.jinja', examenList=examenList, categoriaList=categoriaList)
+
+
+
 
 
 @app.route('/catalogo/update/<id>', methods=['GET', 'POST'])
 def modificar_examen_catalogo(id):
+    validar_sesion()
     oid = ObjectId(id)
     examenes = Examenes.find_one({'_id': oid})
 
@@ -339,7 +333,11 @@ def modificar_examen_catalogo(id):
 
                                           })    
         return redirect(url_for('getListCatalogo'))
-    return render_template("modificarExamen.html.jinja", examenes=examenes)
+    categorias = Categorias.find()
+    indicaciones = Indicaciones.find()
+    return render_template("modificarExamen.html.jinja", examenes=examenes, indicaciones=indicaciones, categorias=categorias)
+
+#Nota: la barra de búsqueda para filtrar nunca me funcionó, lo intenté bastante
 
 
 

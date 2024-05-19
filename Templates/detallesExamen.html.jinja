@@ -4,10 +4,14 @@
 <h1>{% block title %} Examen{% endblock %}</h1>
     <ul>
         <li>
-           Categoria: {{ examen.IDCategoria }} 
+           ID examen: {{ examen.Nombre }} 
            TipoMuestra: {{ examen.TipoMuestra }} 
+           Nombre: {{ examen.Nombre }} 
            Precio: {{ examen.Precio }} 
-           Indicaciones: {{ examen.IDIndicacion }} 
+           Indicaciones: {{ indicacion.Descripcion }} 
+           Categoría: {{ categoria.Nombre }} 
+
+           
         </li>
     </ul>
 {% endblock %}

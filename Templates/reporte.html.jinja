@@ -3,50 +3,51 @@
 {% block content %}
 <h1>{% block title %} Reporte {% endblock %}</h1>
 
-<h2>Cantidad de Exámenes por Categoría</h2>
+<h2>Cantidad de exámenes por categoría</h2>
 <table>
   <tr>
     <th>Categoría</th>
     <th>Cantidad de Exámenes</th>
   </tr>
-  {% for categoria in cate%}
+    {% for categoria_id, cantidad in cantcategorias.items() %}
       <tr>
-          <td>{{ categoria.Nombre }}</td>
-          <td>{{ cantidad.cancategorias }}</td>
+          <td>{{ categoriasbusq[categoria_id] }}</td>
+          <td>{{ cantidad }}</td>
       </tr>
-  {% endfor %}
-
+    {% endfor %}
 </table>
 
-<h2>Indicación de Examen Más Común</h2>
+<h2>ID de la indicación de examen más común</h2>
 <p>{{indicacionmascomun}}</p>
 
-<h2>Exámenes Agrupados por Precio</h2>
+<h2>Exámenes agrupados por precio</h2>
 <table>
   <tr>
-    <th>Intervalo de Precio (Bs)</th>
-    <th>Cantidad de Exámenes</th>
+    <th>Intervalo de precio (Bs)</th>
+    <th>Cantidad de exámenes</th>
   </tr>
   <tr>
     <td>1 a 100</td>
-    <td>{{ intervalodeprecios['1-100'] }}</td>
+    <td>{{ intervalodeprecios[0] }}</td>
   </tr>
   <tr>
     <td>101 a 200</td>
-    <td>{{ intervalodeprecios['101-200'] }}</td>
+    <td>{{ intervalodeprecios[1] }}</td>
   </tr>
   <tr>
     <td>201 a 300</td>
-    <td>{{ intervalodeprecios['201-300'] }}</td>
+    <td>{{ intervalodeprecios[2] }}</td>
   </tr>
   <tr>
-    <td>301 - 500</td>
-    <td>{{ intervalodeprecios['301-500'] }}</td>
+    <td>301 a 500</td>
+    <td>{{ intervalodeprecios[3] }}</td>
   </tr>
   <tr>
-    <td>mayor de 5010</td>
-    <td>{{ intervalodeprecios['501+'] }}</td>
+    <td>mayor de 501</td>
+    <td>{{ intervalodeprecios[4] }}</td>
   </tr>
+
+
 </table>
 
 {% endblock %}

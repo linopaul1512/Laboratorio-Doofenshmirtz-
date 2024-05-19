@@ -1,0 +1,6 @@
+- Iniciar Sesión: 
+https://medium.com/featurepreneur/building-a-user-authentication-system-in-flask-with-mongodb-login-and-register-679f0bd86777
+
+- Método count_documents:
+https://www.geeksforgeeks.org/count-the-number-of-documents-in-mongodb-using-python/
+

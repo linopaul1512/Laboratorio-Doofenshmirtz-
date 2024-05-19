@@ -19,18 +19,28 @@
             </div> 
 
             <div>
-                <label for="IDCategoria">IDCategoria: </label><br>
-                <input type="text" class="form-control" name="IDCategoria" 
-                placeholder="IDCategoria"
-                value="{{ examenes.IDCategoria }}">
-                <br>
+                <label for="IDCategoria">Categorías disponibles: </label><br>
+                <select id="IDCategoria" name="IDCategoria">
+                {% for categoria in categorias %}
+                   <option value="{{ categoria.Nombre }}" {% if categoria.Nombre == examenes.IDCategoria %} selected {% endif %}>{{ categoria.Nombre }}</option>
+                {% endfor %}
+                </select><br>
+            </div>
+            
+            <div>
+                <label for="IDIndicacion">Indicaciones disponibles: </label><br>
+                <select id="IDIndicacion" name="IDIndicacion">
+                {% for indicacion in indicaciones %}
+                    <option value="{{ indicacion.Descripcion }}" {% if indicacion.Descripcion == examenes.IDIndicacion %} selected {% endif %}>{{ indicacion.Descripcion }}</option>
+                {% endfor %}
+                </select><br>
             </div>
 
-                <div>
-                <label for="ID Indicacion">ID Indicacion: </label><br>
-                <input type="text" class="form-control" name="IDIndicacion" 
-                placeholder="IDIndicacion"
-                value="{{ examenes.IDIndicacion }}">
+            <div>
+                <label for="Nombre">Nombre: </label><br>
+                <input type="text" class="form-control" name="Nombre" 
+                placeholder="Nombre"
+                value="{{ examenes.Nombre }}">
                 <br>
             </div>
 

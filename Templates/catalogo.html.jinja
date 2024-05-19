@@ -1,45 +1,36 @@
 {% extends 'base.html.jinja' %}
 
-
-
 {% block content %}
 <h1>{% block title %} Mi lista {% endblock %}</h1>
-    
-   
-    <table id="formcenter">
 
-        <tr>
-            <th>ID del Examen</th>
-            <th>Nombre del Examen</th>
-            <th>Precio</th>
-           
-        
-            
-        </tr>
-        {% for examen in examenList %}
+<!-- Barra de búsqueda -->
+<form method="GET" action="{{ url_for('getListCatalogo')  }}">
+    <input type="text" name="search" placeholder="Buscar" value="{{ request.args.get('search', '') }}">
+    <button type="submit">Buscar</button>
+</form>
+
+<table id="formcenter">
+    <tr>
+        <th>ID del Examen</th>
+        <th>Nombre del Examen</th>
+        <th>Precio</th>
+    </tr>
+    {% for examen in examenList %}
         <tr>
             <td>{{ examen.IDExamen }}</td>
             <td>{{ examen.Nombre }}</td>
             <td>{{ examen.Precio }}</td>
-            
-            <td class="css"> 
-                <button class="css" value="Modificar" onclick="window.location.href='/catalogo/update/{{examen._id}}' ;" >Modificar</button> 
-                <button class="css" value="Consultar" onclick="window.location.href='/{{examen._id}}' ;" >Ver Detalles</button> 
-                <form action="{{url_for('eliminar_examen', id=examen._id) }}" method="post">
-                    <input class="css" type="submit" value="Eliminar">    
-                </form> 
-                
+            <td class="css">
+                <button class="css" value="Modificar" onclick="window.location.href='/catalogo/update/{{ examen._id }}';">Modificar</button>
+                <button class="css" value="Consultar" onclick="window.location.href='/{{ examen._id }}';">Ver Detalles</button>
+                <form action="{{ url_for('eliminar_examen', id=examen._id) }}" method="post">
+                    <input class="css" type="submit" value="Eliminar">
+                </form>
             </td>
-
-         
-           
-
         </tr>
-
-        </table>
-            <a href="{{url_for('agregar_categoria')}}">¿No tienes categorías agregadas? Agraga ya</a>
-            <br>
-            <a href="{{url_for('agregar_indicacion')}}">¿No tienes indicaciones agregadas? Agrega ya</a>
-
-        {% endfor %}
+    {% endfor %}
+</table>
+<a href="{{ url_for('agregar_categoria') }}">¿No tienes categorías agregadas? Agraga ya</a>
+<br>
+<a href="{{ url_for('agregar_indicacion') }}">¿No tienes indicaciones agregadas? Agrega ya</a>
 {% endblock %}

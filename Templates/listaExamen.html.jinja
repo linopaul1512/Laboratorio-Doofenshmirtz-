@@ -1,36 +1,29 @@
 {% extends 'base.html.jinja' %}
 
-
-
 {% block content %}
-<h1>{% block title %} Mi lista {% endblock %}</h1>
-    
-   
-    <table id="formcenter">
+<h1>{% block title %} Lista de exámenes {% endblock %}</h1>
 
-        <tr>
-            <th>ID del Examen</th>
-            <th>Nombre del Examen</th>
-            <th>Tipo de muestra</th>
-        </tr>
-        {% for examen in examenList %}
+
+
+<table id="formcenter">
+    <tr>
+        <th>ID del Examen</th>
+        <th>Nombre del Examen</th>
+        <th>TipoMuestra</th>
+    </tr>
+    {% for examen in examenList %}
         <tr>
             <td>{{ examen.IDExamen }}</td>
             <td>{{ examen.Nombre }}</td>
             <td>{{ examen.TipoMuestra }}</td>
-            
-            <td class="css"> 
-                <button class="css" value="Modificar" onclick="window.location.href='/examenes/update/{{examen._id}}' ;" >Modificar</button> 
-                <button class="css" value="Consultar" onclick="window.location.href='/{{examen._id}}' ;" >Ver Detalles</button> 
-                <form action="{{url_for('eliminar_examen', id=examen._id) }}" method="post">
-                    <input class="css" type="submit" value="Eliminar">    
-                </form> 
-                
+            <td class="css">
+                <button class="css" value="Modificar" onclick="window.location.href='/catalogo/update/{{ examen._id }}';">Modificar</button>
+                <button class="css" value="Consultar" onclick="window.location.href='/{{ examen._id }}';">Ver Detalles</button>
+                <form action="{{ url_for('eliminar_examen', id=examen._id) }}" method="post">
+                    <input class="css" type="submit" value="Eliminar">
+                </form>
             </td>
-
         </tr>
-
-        </table>
-           
-        {% endfor %}
+    {% endfor %}
+</table>
 {% endblock %}
